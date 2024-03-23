@@ -16,6 +16,7 @@ ${ENDPOINT_WOLF}  http://127.0.0.1:9090/WebWolf
 ${USERNAME}  robotuser
 ${PASSWORD}  password
 ${HEADLESS}  ${FALSE}
+${JWT_TOKEN} ${EMPTY}
 
 *** Keywords ***
 Initial_Page
@@ -113,7 +114,7 @@ Check_JWT_Page
   Go To  ${ENDPOINT_WOLF}/jwt
   Click Element  token
   Wait Until Element Is Enabled  token  5s
-  Input Text     token  eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+  Input Text     token  ${JWT_TOKEN}
   Click Element  secretKey
   Input Text     secretKey  none
   Sleep  2s  # Pause before reading the result
