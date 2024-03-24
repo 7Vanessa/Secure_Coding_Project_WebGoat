@@ -45,6 +45,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class Servers {
 
   private final LessonDataSource dataSource;
+  private static final List<String> ALLOWED_COLUMNS = List.of("id", "hostname", "ip", "mac", "status", "description");
 
   @AllArgsConstructor
   @Getter
@@ -65,14 +66,15 @@ public class Servers {
   @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
   @ResponseBody
   public List<Server> sort(@RequestParam String column) throws Exception {
-    List<Server> servers = new ArrayList<>();
+      if (!ALLOWED_COLUMNS.contains(column)) {
+          throw new IllegalArgumentException("Invalid column name.");
+      }
+      List<Server> servers = new ArrayList<>();
+      String query = String.format("select id, hostname, ip, mac, status, description from SERVERS where status <> 'out of order' order by %s", column);
 
     try (var connection = dataSource.getConnection()) {
       try (var statement =
-          connection.prepareStatement(
-              "select id, hostname, ip, mac, status, description from SERVERS where status <> 'out"
-                  + " of order' order by "
-                  + column)) {
+          connection.prepareStatement(query)) {
         try (var rs = statement.executeQuery()) {
           while (rs.next()) {
             Server server =
