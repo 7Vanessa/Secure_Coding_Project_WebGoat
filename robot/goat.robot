@@ -115,6 +115,7 @@ Check_JWT_Page
   Click Element  token
   Wait Until Element Is Enabled  token  5s
   Input Text     token  ${JWT_TOKEN}
+
   Click Element  secretKey
   Input Text     secretKey  none
   Sleep  2s  # Pause before reading the result
