@@ -36,40 +36,46 @@ import org.springframework.web.bind.annotation.RestController;
 @AssignmentHints({"vulnerable.hint"})
 public class VulnerableComponentsLesson extends AssignmentEndpoint {
 
-    @PostMapping("/VulnerableComponents/attack1")
-    public @ResponseBody AttackResult completed(@RequestParam String payload) {
-        XStream xstream = new XStream();
-        xstream.allowTypes(new Class[]{ContactImpl.class});
+  @PostMapping("/VulnerableComponents/attack1")
+  public @ResponseBody AttackResult completed(@RequestParam String payload) {
+    XStream xstream = new XStream();
+    xstream.allowTypes(new Class[] {ContactImpl.class});
 
-        if (!isValidPayload(payload)) {
-            return failed(this).feedback("input.validation.failed").build();
-        }
-
-        Contact contact = null;
-
-        try {
-            if (!StringUtils.isEmpty(payload)) {
-                payload = payload.replace("+", "").replace("\r", "").replace("\n", "").replace("> ", ">").replace(" <", "<");
-            }
-            contact = (Contact) xstream.fromXML(payload);
-        } catch (Exception ex) {
-            return failed(this).feedback("vulnerable-components.close").output(ex.getMessage()).build();
-        }
-
-        try {
-            if (null != contact) {
-                contact.getFirstName();
-            }
-            if (!(contact instanceof ContactImpl)) {
-                return success(this).feedback("vulnerable-components.success").build();
-            }
-        } catch (Exception e) {
-            return success(this).feedback("vulnerable-components.success").output(e.getMessage()).build();
-        }
-        return failed(this).feedback("vulnerable-components.fromXML").feedbackArgs(contact).build();
+    if (!isValidPayload(payload)) {
+      return failed(this).feedback("input.validation.failed").build();
     }
 
-    private boolean isValidPayload(String payload) {
-        return true;
+    Contact contact = null;
+
+    try {
+      if (!StringUtils.isEmpty(payload)) {
+        payload =
+            payload
+                .replace("+", "")
+                .replace("\r", "")
+                .replace("\n", "")
+                .replace("> ", ">")
+                .replace(" <", "<");
+      }
+      contact = (Contact) xstream.fromXML(payload);
+    } catch (Exception ex) {
+      return failed(this).feedback("vulnerable-components.close").output(ex.getMessage()).build();
     }
+
+    try {
+      if (null != contact) {
+        contact.getFirstName();
+      }
+      if (!(contact instanceof ContactImpl)) {
+        return success(this).feedback("vulnerable-components.success").build();
+      }
+    } catch (Exception e) {
+      return success(this).feedback("vulnerable-components.success").output(e.getMessage()).build();
+    }
+    return failed(this).feedback("vulnerable-components.fromXML").feedbackArgs(contact).build();
+  }
+
+  private boolean isValidPayload(String payload) {
+    return true;
+  }
 }
